@@ -13,24 +13,29 @@ const Login = (props) => {
 
     // Использование useEffect с задержкой, чтобы не на каждое нажатие была реакция, далее чтобы они все не срабатывали
     // сразу, предварительно вызывается функция очистки, в которой здесь удаляется таймер предыдущей итерации
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setFormIsValid(
-                inputEmail.includes("@") && inputPassword.trim().length > 7
-            );
-        }, 1000);
-        // Возвращает функцию очистки, которая запускается перед useEffect
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [inputEmail, inputPassword])
+    /* useEffect(() => {
+         const timer = setTimeout(() => {
+             setFormIsValid(
+                 inputEmail.includes("@") && inputPassword.trim().length > 7
+             );
+         }, 1000);
+         // Возвращает функцию очистки, которая запускается перед useEffect
+         return () => {
+             clearTimeout(timer);
+         };
+     }, [inputEmail, inputPassword])*/
 
     const emailChangeHandler = (event) => {
         setInputEmail(event.target.value);
+        setFormIsValid(
+            event.target.value.includes("@") && inputPassword.trim().length > 7
+        );
     };
 
     const passwordChangeHandler = (event) => {
         setInputPassword(event.target.value);
+        setFormIsValid(event.target.value.trim().length > 7 && inputEmail.includes("@")
+        );
     };
 
     const validateEmailHandler = () => {
