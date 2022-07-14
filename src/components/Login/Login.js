@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from "react";
+import React, {useReducer, useState, useEffect} from "react";
 
 import Card from "../UI/Card/Card";
 import styles from "./Login.module.css";
@@ -54,31 +54,35 @@ const Login = (props) => {
     );
     const [passwordState, dispatchPasswordState] = useReducer(passwordReducer, {value: '', isValid: undefined})
 
+    // Деструктуризация объекта и алиас - извлекается свойство объекта isValid и помещается в переменную с алиасом emailIsValid
+    const { isValid: emailIsValid } = emailState;
+    const { isValid: passwordIsValid } = passwordState;
+
     // Использование useEffect с задержкой, чтобы не на каждое нажатие была реакция, далее чтобы они все не срабатывали
     // сразу, предварительно вызывается функция очистки, в которой здесь удаляется таймер предыдущей итерации
-    /* useEffect(() => {
+     useEffect(() => {
          const timer = setTimeout(() => {
-             setFormIsValid(
-                 inputEmail.includes("@") && inputPassword.trim().length > 7
-             );
+             setFormIsValid(emailIsValid && passwordIsValid);
          }, 1000);
          // Возвращает функцию очистки, которая запускается перед useEffect
          return () => {
              clearTimeout(timer);
          };
-     }, [inputEmail, inputPassword])*/
+     },
+         // Т.к. если зависимость полностью от объекта emailState вызывает слишком частый запуск хука, а нужно только свойство isValid
+         // Переделываем на использование свойства emailIsValid
+         [emailIsValid, passwordIsValid]) // Запускается хук когда меняются эти данные. В них будет гарантированно последнее состояние
 
     const emailChangeHandler = (event) => {
         dispatchEmailState({type: 'USER_INPUT', value: event.target.value}); // вызов этой функции запустит emailReducer
-        setFormIsValid(
-            event.target.value.includes("@") && passwordState.isValid
-        );
+
+        // setFormIsValid(event.target.value.includes("@") && passwordState.isValid);
     };
 
     const passwordChangeHandler = (event) => {
         dispatchPasswordState({type: 'USER_INPUT', value: event.target.value})
-        setFormIsValid(event.target.value.trim().length > 7 && emailState.isValid
-        );
+
+        // setFormIsValid(event.target.value.trim().length > 7 && emailState.isValid);
     };
 
     const validateEmailHandler = () => {
