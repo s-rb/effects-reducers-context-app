@@ -1,8 +1,9 @@
-import React, {useReducer, useState, useEffect} from "react";
+import React, {useReducer, useState, useEffect, useContext} from "react";
 
 import Card from "../UI/Card/Card";
 import styles from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import AuthContext from "../../store/auth-context";
 
 // prevState - последнее состояние. action - результат (параметр) с которым вызывается функция редъюсера (dispathEmailState)
 const emailReducer = (prevState, action) => {
@@ -58,6 +59,8 @@ const Login = (props) => {
     const { isValid: emailIsValid } = emailState;
     const { isValid: passwordIsValid } = passwordState;
 
+    const ctx = useContext(AuthContext);
+
     // Использование useEffect с задержкой, чтобы не на каждое нажатие была реакция, далее чтобы они все не срабатывали
     // сразу, предварительно вызывается функция очистки, в которой здесь удаляется таймер предыдущей итерации
      useEffect(() => {
@@ -95,7 +98,7 @@ const Login = (props) => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        props.onLogin(emailState.value, passwordState.value);
+        ctx.onLogin(emailState.value, passwordState.value);
     };
 
     return (
