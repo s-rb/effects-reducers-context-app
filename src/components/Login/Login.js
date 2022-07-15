@@ -1,4 +1,4 @@
-import React, {useReducer, useState, useEffect, useContext} from "react";
+import React, {useReducer, useState, useEffect, useContext, useRef} from "react";
 
 import Card from "../UI/Card/Card";
 import styles from "./Login.module.css";
@@ -62,6 +62,9 @@ const Login = (props) => {
 
     const ctx = useContext(AuthContext);
 
+    const emailInputRef = useRef();
+    const passwordInputRef = useRef();
+
     // Использование useEffect с задержкой, чтобы не на каждое нажатие была реакция, далее чтобы они все не срабатывали
     // сразу, предварительно вызывается функция очистки, в которой здесь удаляется таймер предыдущей итерации
     useEffect(() => {
@@ -99,13 +102,20 @@ const Login = (props) => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        ctx.onLogin(emailState.value, passwordState.value);
+        if (formIsValid) {
+            ctx.onLogin(emailState.value, passwordState.value);
+        } else if (!emailIsValid) {
+            emailInputRef.current.doFocus();
+        } else {
+            passwordInputRef.current.doFocus();
+        }
     };
 
     return (
         <Card className={styles.login}>
             <form onSubmit={submitHandler}>
                 <Input
+                    ref={emailInputRef}
                     isValid={emailIsValid}
                     label={"Email"}
                     type={"email"}
@@ -115,6 +125,7 @@ const Login = (props) => {
                     onBlurHandler={validateEmailHandler}
                 />
                 <Input
+                    ref={passwordInputRef}
                     isValid={passwordIsValid}
                     label={"Пароль"}
                     type={"password"}
@@ -124,7 +135,7 @@ const Login = (props) => {
                     onBlurHandler={validatePasswordHandler}
                 />
                 <div className={styles.actions}>
-                    <Button type="submit" className={styles.btn} disabled={!formIsValid}>
+                    <Button type="submit" className={styles.btn}>
                         Вход
                     </Button>
                 </div>
